@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: multitenant-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: multitenant
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d multitenant"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: multitenant-api
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: multitenant
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      JWT_SECRET: super-secret-jwt-key-for-development
+      JWT_EXPIRES_IN: 1h
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  postgres_data:
