@@ -1,0 +1,42 @@
+{
+  "name": "multi-tenant-csv-api",
+  "version": "1.0.0",
+  "description": "Multi-Tenant CSV Export API with Functional Isolation Tests",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "cross-env NODE_ENV=test DATABASE_HOST=localhost jest --runInBand --forceExit"
+  },
+  "keywords": [
+    "multi-tenant",
+    "csv",
+    "postgresql",
+    "express",
+    "jwt",
+    "rbac"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "csv-stringify": "^6.5.2",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.3"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "globalTeardown": "<rootDir>/tests/teardown.js",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "verbose": true
+  }
+}
